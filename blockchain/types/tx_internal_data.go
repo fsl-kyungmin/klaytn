@@ -557,16 +557,16 @@ func IntrinsicGasPayload(gas uint64, data []byte, isContractCreation bool, rules
 		return gas, nil
 	}
 	// Make sure we don't exceed uint64 for all data combinations
-	if (math.MaxUint64-gas)/params.TxDataGas < length {
-		return 0, ErrGasUintOverflow
-	}
+	// 	if (math.MaxUint64-gas)/params.TxDataGas < length {
+	// 		return 0, ErrGasUintOverflow
+	// 	}
 	gas += length * params.TxDataGas
 
 	if isContractCreation && rules.IsShanghai {
 		lenWords := toWordSize(length)
-		if (math.MaxUint64-gas)/params.InitCodeWordGas < lenWords {
-			return 0, ErrGasUintOverflow
-		}
+		// 		if (math.MaxUint64-gas)/params.InitCodeWordGas < lenWords {
+		// 			return 0, ErrGasUintOverflow
+		// 		}
 		gas += lenWords * params.InitCodeWordGas
 	}
 	return gas, nil
@@ -583,15 +583,15 @@ func IntrinsicGasPayloadLegacy(gas uint64, data []byte) (uint64, error) {
 			}
 		}
 		// Make sure we don't exceed uint64 for all data combinations
-		if (math.MaxUint64-gas)/params.TxDataNonZeroGas < nz {
-			return 0, ErrGasUintOverflow
-		}
+		// 		if (math.MaxUint64-gas)/params.TxDataNonZeroGas < nz {
+		// 			return 0, ErrGasUintOverflow
+		// 		}
 		gas += nz * params.TxDataNonZeroGas
 
 		z := uint64(len(data)) - nz
-		if (math.MaxUint64-gas)/params.TxDataZeroGas < z {
-			return 0, ErrGasUintOverflow
-		}
+		// 		if (math.MaxUint64-gas)/params.TxDataZeroGas < z {
+		// 			return 0, ErrGasUintOverflow
+		// 		}
 		gas += z * params.TxDataZeroGas
 	}
 

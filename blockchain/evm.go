@@ -136,82 +136,83 @@ func Transfer(db vm.StateDB, sender, recipient common.Address, amount *big.Int) 
 
 func DoEstimateGas(ctx context.Context, gasLimit, rpcGasCap uint64, txValue, gasPrice, balance *big.Int, test func(gas uint64) (bool, *ExecutionResult, error)) (hexutil.Uint64, error) {
 	// Binary search the gas requirement, as it may be higher than the amount used
-	var (
-		lo  uint64 = params.TxGas - 1
-		hi  uint64 = params.UpperGasLimit
-		cap uint64
-	)
-
-	// Initialize nil params
-	if txValue == nil {
-		txValue = big.NewInt(0)
-	}
-	if gasPrice == nil {
-		gasPrice = big.NewInt(0)
-	}
-	if balance == nil {
-		balance = big.NewInt(0)
-	}
-
-	if gasLimit >= params.TxGas {
-		hi = gasLimit
-	}
-
-	// recap the highest gas limit with account's available balance.
-	if gasPrice.BitLen() != 0 {
-		available := new(big.Int).Set(balance)
-		if txValue.Cmp(available) >= 0 {
-			return 0, errors.New("insufficient funds for transfer")
-		}
-		available.Sub(available, txValue)
-		allowance := new(big.Int).Div(available, gasPrice)
-
-		// If the allowance is larger than maximum uint64, skip checking
-		if allowance.IsUint64() && hi > allowance.Uint64() {
-			logger.Warn("Gas estimation capped by limited funds", "original", hi, "balance", balance,
-				"sent", txValue, "maxFeePerGas", gasPrice, "fundable", allowance)
-			hi = allowance.Uint64()
-		}
-	}
-	// Recap the highest gas allowance with specified gascap.
-	if rpcGasCap != 0 && hi > rpcGasCap {
-		logger.Warn("Caller gas above allowance, capping", "requested", hi, "cap", rpcGasCap)
-		hi = rpcGasCap
-	}
-	cap = hi
-
-	// Execute the binary search and hone in on an executable gas limit
-	for lo+1 < hi {
-		mid := (hi + lo) / 2
-		failed, _, err := test(mid)
-		if err != nil {
-			return 0, err
-		}
-
-		if failed {
-			lo = mid
-		} else {
-			hi = mid
-		}
-	}
-	// Reject the transaction as invalid if it still fails at the highest allowance
-	if hi == cap {
-		failed, result, err := test(hi)
-		if err != nil {
-			return 0, err
-		}
-		if failed {
-			if result != nil && result.VmExecutionStatus != types.ReceiptStatusErrOutOfGas {
-				if len(result.Revert()) > 0 {
-					return 0, NewRevertError(result)
-				}
-				return 0, result.Unwrap()
-			}
-			// Otherwise, the specified gas cap is too low
-			return 0, fmt.Errorf("gas required exceeds allowance (%d)", cap)
-		}
-	}
-	return hexutil.Uint64(hi), nil
+	// 	var (
+	// 		lo  uint64 = params.TxGas - 1
+	// 		hi  uint64 = params.UpperGasLimit
+	// 		cap uint64
+	// 	)
+	//
+	// 	// Initialize nil params
+	// 	if txValue == nil {
+	// 		txValue = big.NewInt(0)
+	// 	}
+	// 	if gasPrice == nil {
+	// 		gasPrice = big.NewInt(0)
+	// 	}
+	// 	if balance == nil {
+	// 		balance = big.NewInt(0)
+	// 	}
+	//
+	// 	if gasLimit >= params.TxGas {
+	// 		hi = gasLimit
+	// 	}
+	//
+	// 	// recap the highest gas limit with account's available balance.
+	// 	if gasPrice.BitLen() != 0 {
+	// 		available := new(big.Int).Set(balance)
+	// 		if txValue.Cmp(available) >= 0 {
+	// 			return 0, errors.New("insufficient funds for transfer")
+	// 		}
+	// 		available.Sub(available, txValue)
+	// 		allowance := new(big.Int).Div(available, gasPrice)
+	//
+	// 		// If the allowance is larger than maximum uint64, skip checking
+	// 		if allowance.IsUint64() && hi > allowance.Uint64() {
+	// 			logger.Warn("Gas estimation capped by limited funds", "original", hi, "balance", balance,
+	// 				"sent", txValue, "maxFeePerGas", gasPrice, "fundable", allowance)
+	// 			hi = allowance.Uint64()
+	// 		}
+	// 	}
+	// 	// Recap the highest gas allowance with specified gascap.
+	// 	if rpcGasCap != 0 && hi > rpcGasCap {
+	// 		logger.Warn("Caller gas above allowance, capping", "requested", hi, "cap", rpcGasCap)
+	// 		hi = rpcGasCap
+	// 	}
+	// 	cap = hi
+	//
+	// 	// Execute the binary search and hone in on an executable gas limit
+	// 	for lo+1 < hi {
+	// 		mid := (hi + lo) / 2
+	// 		failed, _, err := test(mid)
+	// 		if err != nil {
+	// 			return 0, err
+	// 		}
+	//
+	// 		if failed {
+	// 			lo = mid
+	// 		} else {
+	// 			hi = mid
+	// 		}
+	// 	}
+	// 	// Reject the transaction as invalid if it still fails at the highest allowance
+	// 	if hi == cap {
+	// 		failed, result, err := test(hi)
+	// 		if err != nil {
+	// 			return 0, err
+	// 		}
+	// 		if failed {
+	// 			if result != nil && result.VmExecutionStatus != types.ReceiptStatusErrOutOfGas {
+	// 				if len(result.Revert()) > 0 {
+	// 					return 0, NewRevertError(result)
+	// 				}
+	// 				return 0, result.Unwrap()
+	// 			}
+	// 			// Otherwise, the specified gas cap is too low
+	// 			return 0, fmt.Errorf("gas required exceeds allowance (%d)", cap)
+	// 		}
+	// 	}
+	// 	return hexutil.Uint64(hi), nil
+	return 0, nil
 }
 
 func NewRevertError(result *ExecutionResult) *RevertError {

@@ -1,0 +1,32 @@
+{
+  "blockScore": "0x1",
+  "config": {
+    "chainId": 203,
+    "istanbulCompatibleBlock": 0,
+    "londonCompatibleBlock": 0,
+    "ethTxTypeCompatibleBlock": 0,
+    "magmaCompatibleBlock": 0,
+    "koreCompatibleBlock": 0,
+    "shanghaiCompatibleBlock": 0,
+    "kip103CompatibleBlock": 0,
+    "kip103ContractAddress": "0x0000000000000000000000000000000000000000",
+    "istanbul": {
+      "epoch": 604800,
+      "policy": 0,
+      "sub": 21
+    },
+    "unitPrice": 0,
+    "deriveShaImpl": 0,
+    "governance": null
+  },
+  "extraData": "0x0000000000000000000000000000000000000000000000000000000000000000f85ad594af810bc523807f414eca81cdd42d5dc3f8e5a3a8b8410000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000c0",
+  "baseFeePerGas": "0x0",
+  "gasUsed": "0x0",
+  "gasLimit": "0x0",
+  "gasPrice": "0x0",
+  "governanceData": null,
+  "number": "0x0",
+  "parentHash": "0x0000000000000000000000000000000000000000000000000000000000000000",
+  "timestamp": "0x655d5377",
+  "alloc": {}
+}

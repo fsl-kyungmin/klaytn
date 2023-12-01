@@ -449,7 +449,7 @@ var receiptstatus2errTxFailed = map[uint]error{
 
 func (st *StateTransition) refundGas(refundQuotient uint64) {
 	// Apply refund counter, capped a refund quotient
-	refund := st.gasUsed() / refundQuotient
+	refund := st.gasUsed()
 	if refund > st.state.GetRefund() {
 		refund = st.state.GetRefund()
 	}
